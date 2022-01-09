@@ -1,36 +1,27 @@
 <script setup>
   import { reactive, ref } from '@vue/reactivity'
-  import { onMounted } from '@vue/runtime-core'
+  import { onBeforeMount, onMounted } from '@vue/runtime-core'
   import rockstar_games_logo from './assets/img/rockstar_games_logo.png'
   import rockstar_north_logo from './assets/img/rockstar_north_logo.png'
   import gta_4_logo from './assets/img/gta_4_logo.png'
   const intros = reactive([
-    { 
-      intro_url: rockstar_games_logo
-    },
-    { 
-      intro_url: rockstar_north_logo   // Burası
-    },
-    { 
-      intro_url: gta_4_logo   // Burası
-    },
+    {intro_url: rockstar_games_logo},
+    {intro_url: rockstar_north_logo},
+    {intro_url: gta_4_logo},
   ])
   const is_showing = ref(-1)
   onMounted(() => {
-    is_showing.value = 0;   // ilkindede transition olması icin boyle yapman lazım
+    is_showing.value++;
   })
-  const afterEnter = () => {
-    console.log('Calıssana Yrrk')
-    is_showing.value != 2 ? is_showing.value++ : null
-  }
-  
+  setInterval(() => {
+    // is_showing.value != 2 ? is_showing.value++ : null
+    is_showing.value++
+  },2400)
 </script>
 <template>
   <div class="container">
     <div v-for="(intro, index) in intros"  :key="index">
-      <transition :name="'intro_' + index" mode="out-in" @after-enter="afterEnter">
-        <img :src="intro.intro_url" :id="'img_' + index"  v-if="is_showing == index">
-      </transition>
+        <img :src="intro.intro_url" v-if="is_showing == index" :class="'intro intro_logo_' + index">
     </div>
     <button @click="is_showing++">
       <h2>TIKLA</h2>
@@ -49,51 +40,49 @@
     width: 100vw;
     height: 100vh;
     background: #000000;  // cotainer'in bg'sini degistirmene gerek yok zaten tanıtımlardan sonra sadece bg_image'ler gelip onu kaplayacak
-    #img_0, #img_1, #img_2 {
+    .intro {
       position: absolute;
+      height: auto;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 400px;
-      height: auto;
+      transform: translate(-50%,-50%);
     }
+    .intro_logo_2 {
+      width: 600px;
+      animation: logo_aniamtion 3s;
+      @keyframes logo_aniamtion {
+        0% {
+          opacity: 0;
+        }
+        25% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+    }
+    .intro_logo_0, .intro_logo_1 {
+      animation: intro_aniamtion 3s;
+      @keyframes intro_aniamtion {
+        0% {
+          opacity: 0;
+          width: 400px;
+        }
+        20% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          width: 300px;
+          opacity: 0;
+        }
+      }
   }
-  .intro_0-enter-from, .intro_1-enter-from {
-    opacity: 0;
-    width: 500px !important;
-  }
-  .intro_0-enter-to, .intro_1-enter-to {
-    opacity: 1;
-    // width: 400px !important;
-  }
-  .intro_0-enter-active, .intro_1-enter-active, .intro_0-leave-active, .intro_1-leave-active {
-    transition: all 2s ease;
-  }
-  .intro_1-enter-active {
-    transition-delay: 2s;
-  }
-  .intro_0-leave-from, .intro_1-leave-from {
-    opacity: 1;
-    // width: 400px !important;
-  }
-  .intro_0-leave-to, .intro_1-leave-to {
-    opacity: 0;
-    width: 300px !important;
-  }
-  .intro_2-enter-from {
-    opacity: 0;
-  }
-  .intro_2-enter-to {
-    opacity: 1;
-  }
-  .intro_2-enter-active{
-    transition: opacity 2s linear;
-    transition-delay: 2s;
-  }
-  .intro_2-leave-from {
-    opacity: 1;
-  }
-  .intro_2-leave-to {
-    opacity: 0;
-  }
+}
 </style>
