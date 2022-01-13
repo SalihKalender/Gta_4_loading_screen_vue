@@ -37,35 +37,28 @@
     is_showing_theme.value = -1
     audio_player.value.play()
     setTimeout(() => {
+      console.log(1)
+      is_showing_intro.value++
       setInterval(() => {
-        // is_showing_intro.value <= 2 ? is_showing_intro.value++ : null
-        if(is_showing_intro.value <= 2) {
+        if(is_showing_intro.value < 1) {
           is_showing_intro.value++
-          if(is_showing_intro.value == 3) {
-            return
-          }
         }
       },3000)
       setTimeout(() => {
-        setTimeout(() => {
+        is_showing_intro.value++
+        setInterval(() => {
+          if(is_showing_intro.value <= 4) {
+            is_showing_intro.value++
+          }
+        },7000)
+      },6000)
+      setTimeout(() => {
+        is_showing_theme.value++
+        setInterval(() => {
           is_showing_theme.value++
-          setInterval(() => {
-            is_showing_theme.value++
-            if(is_showing_theme.value == theme_items.length - 1) {
-              for (let i = 0; i < 10; i ++) {
-                setTimeout(() => {
-                    audio_player.value.volume = 1 - i * 0.1;
-                    if (i === 9) {
-                      audio_player.value.pause()
-                    };
-                }, i * 950); // 2 sec; change this number to raise or lower the duration
-              }
-            }
-          },8500)
-        },3000)
-        
-      }, 9000)
-    }, 1000)
+        },8500)
+      },13500)  // intro 2 4000 s animation and 500ms wait
+    },1500)
   }  
 </script>
 <template>
@@ -125,7 +118,7 @@
     }
     .intro_logo_2 {
       width: 600px;
-      animation: logo_aniamtion 3s;
+      animation: logo_aniamtion 7s;
       @keyframes logo_aniamtion {
         0% {
           opacity: 0;
@@ -143,6 +136,7 @@
     }
     .intro_logo_0, .intro_logo_1 {
       animation: intro_aniamtion 3s;
+      width: 0;
       @keyframes intro_aniamtion {
         0% {
           opacity: 0;
