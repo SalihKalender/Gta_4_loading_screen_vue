@@ -28,10 +28,12 @@
   const is_showing_intro = ref(-1)
   const is_showing_theme = ref(-1)
   const audio_player = ref('')
+  const is_starting = ref(false)
   onMounted(() => {
     // is_showing_intro.value++;
   })
   const start_playing = () => {
+    is_starting.value = true
     audio_player.value.volume = 1;
     is_showing_intro.value = -1;
     is_showing_theme.value = -1
@@ -71,7 +73,9 @@
       <img :src="item.bg" v-if="is_showing_theme == index" class="bg">
       <img :src="item.person" v-if="is_showing_theme == index" class="person" :style="'left:' + item.position + '%'">
     </div>
-    <button type="button" id="play_button" @click="start_playing">Play</button>
+    <transition name="fade">
+      <button type="button" id="play_button" @click="start_playing" v-if="!is_starting">Play</button>
+    </transition>
   </div>  
 </template>
 
@@ -80,6 +84,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
   }
   .container {
     position: relative;
