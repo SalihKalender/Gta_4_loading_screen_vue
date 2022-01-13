@@ -20,9 +20,9 @@
   ])
 
   const theme_items = reactive([
-    {bg: bg_1, person: person_1},
-    {bg: bg_2, person: person_2},
-    {bg: bg_3, person: person_3},
+    {bg: bg_1, person: person_1, position: Math.floor(Math.random() * 40) + 21},
+    {bg: bg_2, person: person_2, position: Math.floor(Math.random() * 40) + 21},
+    {bg: bg_3, person: person_3, position: Math.floor(Math.random() * 40) + 21},
   ])
 
   const is_showing_intro = ref(-1)
@@ -58,6 +58,7 @@
     <!-- <audio :src="loading_audio_url" ref="audio_player"></audio> -->
     <div v-for="(item, index) in theme_items" :key="index">
       <img :src="item.bg" v-if="is_showing_theme == index" class="bg">
+      <img :src="item.person" v-if="is_showing_theme == index" class="person" :style="'left:' + item.position + '%'">
     </div>
   </div>  
 </template>
@@ -80,6 +81,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%,-50%);
+      width: 300px;
     }
     .intro_logo_2 {
       width: 600px;
@@ -140,6 +142,30 @@
         }
         100% {
           transform: scale(1);
+          opacity: 0;
+        }
+      }
+    }
+    .person {
+      position: absolute;
+      bottom: 0;
+      // left: 25%;   // Math.floor(Math.random() * 80) + 21;
+      width: 25%;
+      height: auto;
+      animation: theme_person_animation 7s linear;
+      @keyframes theme_person_animation {
+        0% {
+          transform: scale(1);
+          opacity: 0;
+        }
+        5% {
+          opacity: 1;
+        }
+        85% {
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.15);
           opacity: 0;
         }
       }
