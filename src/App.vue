@@ -28,38 +28,57 @@
   const is_showing_intro = ref(-1)
   const is_showing_theme = ref(-1)
   const audio_player = ref('')
-  // audio_player.value.play()
   onMounted(() => {
-    is_showing_intro.value++;
+    // is_showing_intro.value++;
   })
-  setInterval(() => {
-    // is_showing_intro.value <= 2 ? is_showing_intro.value++ : null
-    if(is_showing_intro.value <= 2) {
-      is_showing_intro.value++
-      if(is_showing_intro.value == 2) {
+  const start_playing = () => {
+    audio_player.value.volume = 1;
+    is_showing_intro.value = -1;
+    is_showing_theme.value = -1
+    audio_player.value.play()
+    setTimeout(() => {
+      setInterval(() => {
+        // is_showing_intro.value <= 2 ? is_showing_intro.value++ : null
+        if(is_showing_intro.value <= 2) {
+          is_showing_intro.value++
+          if(is_showing_intro.value == 3) {
+            return
+          }
+        }
+      },3000)
+      setTimeout(() => {
         setTimeout(() => {
-          is_showing_theme.value = 0
-        },3500)
-      }
-      return 
-    }
-  },3000)
-  setTimeout(() => {
-    setInterval(() => {
-      is_showing_theme.value++
-    },7000)
-  },9000)  
+          is_showing_theme.value++
+          setInterval(() => {
+            is_showing_theme.value++
+            if(is_showing_theme.value == theme_items.length - 1) {
+              for (let i = 0; i < 10; i ++) {
+                setTimeout(() => {
+                    audio_player.value.volume = 1 - i * 0.1;
+                    if (i === 9) {
+                      audio_player.value.pause()
+                    };
+                }, i * 950); // 2 sec; change this number to raise or lower the duration
+              }
+            }
+          },8500)
+        },3000)
+        
+      }, 9000)
+    }, 1000)
+  }  
 </script>
 <template>
   <div class="container">
     <div v-for="(intro, index) in intros"  :key="index">
         <img :src="intro.intro_url" v-if="is_showing_intro == index" :class="'intro intro_logo_' + index">
     </div>
-    <!-- <audio :src="loading_audio_url" ref="audio_player"></audio> -->
+    <audio :src="loading_audio_url" ref="audio_player"></audio>
     <div v-for="(item, index) in theme_items" :key="index">
       <img :src="item.bg" v-if="is_showing_theme == index" class="bg">
       <img :src="item.person" v-if="is_showing_theme == index" class="person" :style="'left:' + item.position + '%'">
     </div>
+    <button type="button" id="play_button" @click="start_playing">Play</button>
   </div>  
 </template>
 
@@ -75,6 +94,27 @@
     width: 100vw;
     height: 100vh;
     background: #000000;  // cotainer'in bg'sini degistirmene gerek yok zaten tanıtımlardan sonra sadece bg_image'ler gelip onu kaplayacak
+    #play_button {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      padding: 15px 40px;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #ffab00;
+      color: #002d73;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      outline: none;
+      transition: all .5s;
+      &:hover {
+        cursor: pointer;
+        background-color: #002d73;
+        color: #ffab00;
+        transition: all .5s;
+      }
+    }
     .intro {
       position: absolute;
       height: auto;
@@ -128,7 +168,7 @@
       height: 100%;
       -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
       filter: grayscale(100%);
-      animation: theme_bg_animation 7s linear;
+      animation: theme_bg_animation 8.5s linear;
       @keyframes theme_bg_animation {
         0% {
           transform: scale(1.20);
@@ -152,13 +192,13 @@
       // left: 25%;   // Math.floor(Math.random() * 80) + 21;
       width: 25%;
       height: auto;
-      animation: theme_person_animation 7s linear;
+      animation: theme_person_animation 8.5s linear;
       @keyframes theme_person_animation {
         0% {
           transform: scale(1);
           opacity: 0;
         }
-        5% {
+        10% {
           opacity: 1;
         }
         85% {
