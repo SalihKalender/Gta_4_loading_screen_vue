@@ -9,9 +9,13 @@
   import bg_1 from './assets/img/bg_1.jpg'
   import bg_2 from './assets/img/bg_2.jpg'
   import bg_3 from './assets/img/bg_3.jpg'
+  import bg_4 from './assets/img/bg_4.jpg'
+  import bg_5 from './assets/img/bg_5.jpg'
   import person_1 from './assets/img/person_1.png'
   import person_2 from './assets/img/person_2.png'
   import person_3 from './assets/img/person_3.png'
+  import person_4 from './assets/img/person_4.png'
+  import person_5 from './assets/img/person_5.png'
 
   const intros = reactive([
     {intro_url: rockstar_games_logo},
@@ -23,15 +27,19 @@
     {bg: bg_1, person: person_1, position: Math.floor(Math.random() * 40) + 21},
     {bg: bg_2, person: person_2, position: Math.floor(Math.random() * 40) + 21},
     {bg: bg_3, person: person_3, position: Math.floor(Math.random() * 40) + 21},
+    {bg: bg_4, person: person_4, position: Math.floor(Math.random() * 40) + 21},
+    {bg: bg_5, person: person_5, position: Math.floor(Math.random() * 40) + 21},
   ])
 
   const is_showing_intro = ref(-1)
   const is_showing_theme = ref(-1)
   const audio_player = ref('')
+  const is_starting = ref(false)
   onMounted(() => {
     // is_showing_intro.value++;
   })
   const start_playing = () => {
+    is_starting.value = true
     audio_player.value.volume = 1;
     is_showing_intro.value = -1;
     is_showing_theme.value = -1
@@ -53,9 +61,22 @@
         },7000)
       },6000)
       setTimeout(() => {
-        is_showing_theme.value++
+        if(is_showing_theme.value <= theme_items.length) {
+          is_showing_theme.value++
+        }
         setInterval(() => {
           is_showing_theme.value++
+          if(is_showing_theme.value == theme_items.length - 1) {
+            console.log('Hallet')
+            for (let i = 0; i < 10; i ++) {
+              setTimeout(() => {
+                  audio_player.value.volume = 1 - i * 0.1;
+                  if (i === 9) {
+                    audio_player.value.pause()
+                  };
+              }, i * 1000); // 10.5 sec; change this number to raise or lower the duration
+            }
+          }
         },8500)
       },13500)  // intro 2 4000 s animation and 500ms wait
     },1500)
@@ -71,7 +92,9 @@
       <img :src="item.bg" v-if="is_showing_theme == index" class="bg">
       <img :src="item.person" v-if="is_showing_theme == index" class="person" :style="'left:' + item.position + '%'">
     </div>
-    <button type="button" id="play_button" @click="start_playing">Play</button>
+    <transition name="fade">
+      <button type="button" id="play_button" @click="start_playing" v-if="!is_starting">Play</button>
+    </transition>
   </div>  
 </template>
 
@@ -80,6 +103,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
   }
   .container {
     position: relative;
@@ -184,7 +216,7 @@
       position: absolute;
       bottom: 0;
       // left: 25%;   // Math.floor(Math.random() * 80) + 21;
-      width: 25%;
+      width: 20%;
       height: auto;
       animation: theme_person_animation 8.5s linear;
       @keyframes theme_person_animation {
